@@ -46,7 +46,7 @@ def main():
     start_state()
     while(time_since_last_pic < 120):
         remove_old_pics(num_pics)
-        select_pics = select_pics(directory, num_pics, old_pics)
+        select_pics = select_pics(directory, num_pics)
         copy_to_repo(select_pics)
         push_to_github(num_pics)
         time_since_last_pic = find_time_since_last_pic()
@@ -63,17 +63,17 @@ def start_state():
 
 def remove_old_pics(num_pics):
     try:
-        pics = [0,(num_pics-1),1]
-        for pic in pics:
-            subprocess.run(["git", "rm", "--cached", '"{}".tif'.format(pic)])
+        subprocess.run(["git", "rm", "--cached", "*.tif"])
         subprocess.run(["git", "commit", "-m", "'automated picture removal'"])
         subprocess.run(["git", "push", "origin", "main"])
+    except:
+        print("No files to remove.")
     return True
 
 def find_time_since_last_pic():
     return time_since_last_pic
 
-def select_pics(directory, old_pics, num_pics):
+def select_pics(directory, num_pics):
     selected_pics = []
     files = os.listdir(directory)[-num_pics:]
     for file in files:
